@@ -9,6 +9,7 @@
 
     <!-- Не используйте это в production -->
     <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+    <script src="https://unpkg.com/prop-types@15.6/prop-types.js"></script>
   </head>
   <body>
     <div id="root"></div>
@@ -73,6 +74,12 @@
         }
       }
 
+      // добавили propTypes.
+      // propTypes (с маленькой буквы) = свойство News
+      News.propTypes = {
+        posledine_novosti: propTypes.array.isRequired, // PropTypes (с большой буквы) = библиотека prop-types
+      };
+
       class Article extends React.Component {
         render() {
           const { author, text } = this.props.note;
@@ -91,7 +98,7 @@
           <React.Fragment>
             <h3>Новости</h3>
             {/*подключение stateless компонент*/}
-            <News posledine_novosti={myNews} /> {/* добавили свойство data */}
+            <News data={myNews} /> {/* добавили свойство data */}
           </React.Fragment>
         );
       };
