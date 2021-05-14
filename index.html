@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <title>React [RU] Tutorial</title>
+    <link rel="stylesheet" href="styles.css" />
     <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
 
@@ -38,23 +39,42 @@
 
       class News extends React.Component {
         render() {
-          const newsTemplate = this.props.posledine_novosti.map(function (
-            item,
-            index
-          ) {
-            return (
-              <div key={index}>
-                {/* добавили родительскому элементу атрибут key */}
-                <p className="news__author">{item.author}:</p>
-                <p className="news__text">{item.text}</p>
-              </div>
-            );
-          });
+          const { posledine_novosti } = this.props;
+          // Переменная-шаблон объявленная заранее, в которую в зависимости от условия сохраняется необходимая разметка.
+          let newsTemplate;
+
+          if (posledine_novosti.length) {
+            newsTemplate = posledine_novosti.map(function (item) {
+              return (
+                <div key={item.id}>
+                  <p class="news__author">{item.author}:</p>
+                  <p class="news__text">{item.text}:</p>
+                </div>
+              );
+            });
+          } else {
+            newsTemplate = <p> К сожалению новостей нет </p>;
+          }
 
           // массив из React элементов
           console.log(newsTemplate);
 
-          return <div className="news">{newsTemplate}</div>;
+          // динамическо добавление css класса (скрывающего надпись)
+          return (
+            <div className="news">
+              {newsTemplate}
+              {/* 1. Сокрытие тэга с помощью динаического присвоения стиля */}
+              <strong className={posledine_novosti.length > 0 ? '' : 'none'}>
+                Всего новостей: {posledine_novosti.length}
+              </strong>
+              {/* 2. Сокрытие тэга с помощью null вывода в разметку*/}
+              {/*
+                {posledine_novosti.length ? (
+                <strong>Всего новостей: {data.length}</strong>
+              ) : null}
+              */}
+            </div>
+          );
         }
       }
 
