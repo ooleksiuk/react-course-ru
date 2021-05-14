@@ -13,7 +13,7 @@
   <body>
     <div id="root"></div>
     <script type="text/babel">
-      // Массив, сохраненный как свойство data в компоненте News
+      // Массив, сохраненный как свойство posledine_novosti в компоненте News
       const myNews = [
         {
           id: 1, // добавили id
@@ -38,58 +38,60 @@
       ];
 
       class News extends React.Component {
-        render() {
+        // Рендерим разметку с новостными записями
+        // N.B! Используем синтаксис стрелочной ф-ии чтобы не терять контекст this (можем обращаться к this.props)
+        renderNews = () => {
           const { posledine_novosti } = this.props;
-          // Переменная-шаблон объявленная заранее, в которую в зависимости от условия сохраняется необходимая разметка.
-          let newsTemplate;
+          // Переменная-шаблон объявленная заранее, в которую в зависимости от условия НАПОЛНЯЕТСЯ необходимая разметка.
+          let newsTemplate = null;
 
           if (posledine_novosti.length) {
             newsTemplate = posledine_novosti.map(function (item) {
-              return (
-                <div key={item.id}>
-                  <p class="news__author">{item.author}:</p>
-                  <p class="news__text">{item.text}:</p>
-                </div>
-              );
+              return <Article key={item.id} note={item} />;
             });
           } else {
             newsTemplate = <p> К сожалению новостей нет </p>;
           }
 
-          // массив из React элементов
-          console.log(newsTemplate);
+          return newsTemplate;
+        };
 
-          // динамическо добавление css класса (скрывающего надпись)
+        render() {
+          const { posledine_novosti } = this.props;
+          console.log(this.renderNews());
+
           return (
             <div className="news">
-              {newsTemplate}
-              {/* 1. Сокрытие тэга с помощью динаического присвоения стиля */}
-              <strong className={posledine_novosti.length > 0 ? '' : 'none'}>
-                Всего новостей: {posledine_novosti.length}
-              </strong>
-              {/* 2. Сокрытие тэга с помощью null вывода в разметку*/}
-              {/*
-                {posledine_novosti.length ? (
-                <strong>Всего новостей: {data.length}</strong>
+              {this.renderNews()}
+              {posledine_novosti.length ? (
+                <strong className={'news__count'}>
+                  Всего новостей: {posledine_novosti.length}
+                </strong>
               ) : null}
-              */}
+            </div>
+          );
+        }
+      }
+
+      class Article extends React.Component {
+        render() {
+          const { author, text } = this.props.note;
+          return (
+            <div className="article">
+              <p className="news__author">{author}:</p>
+              <p className="news__text">{text}</p>
             </div>
           );
         }
       }
 
       // Создание stateless компонента
-      const Comments = () => {
-        return <p>Нет новостей - комментировать нечего.</p>;
-      };
-
-      // Создание stateless компонента
       const App = () => {
         return (
           <React.Fragment>
+            <h3>Новости</h3>
             {/*подключение stateless компонент*/}
             <News posledine_novosti={myNews} /> {/* добавили свойство data */}
-            <Comments />
           </React.Fragment>
         );
       };
