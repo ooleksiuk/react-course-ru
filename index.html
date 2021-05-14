@@ -12,11 +12,28 @@
   <body>
     <div id="root"></div>
     <script type="text/babel">
+      // Создание компонента с помощью функции - stateless component (компоненты без состояния)
       const App = () => {
         return <p>Всем привет, я компонент App</p>;
       };
 
-      ReactDOM.render(<App />, document.getElementById('root'));
+      // Создание компонента с помощью класса - statefull компоненты (компоненты с состоянием)
+      class BigApp extends React.Component {
+        // ключевой метод (JSX разметка внутри )
+        render() {
+          return (
+            // ! Каждый компонент должен возвращать один узел =>
+            //  jsx-элементы должны быть обернуты в один тэг
+            <React.Fragment>
+              <h1>Я компонент, BigApp</h1>
+              <p className="red">Компоненты можно вкладывать друг в друга.</p>
+              <App />
+            </React.Fragment>
+          );
+        }
+      }
+
+      ReactDOM.render(<BigApp />, document.getElementById('root'));
     </script>
   </body>
 </html>
