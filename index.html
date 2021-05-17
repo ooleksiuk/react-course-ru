@@ -143,13 +143,15 @@
 
       // --- добавили test input ---
       class TestInput extends React.Component {
-        state = { myValue: '' };
-        onChangeHandler = (e) => {
-          this.setState({ myValue: e.currentTarget.value });
-        };
+        constructor(props) {
+          super(props);
+          // атрибут <input>
+          this.input = React.createRef();
+        }
 
+        // считываем и выводим введеные пользователем значения 
         onBtnClickHandler = (e) => {
-          alert(this.state.myValue);
+          alert(this.input.current.value);
         };
 
         render() {
@@ -158,8 +160,9 @@
               <input
                 className="test-input"
                 onChange={this.onChangeHandler}
-                value={this.state.myValue}
+                defaultValue=""
                 placeholder="Введите значения"
+                ref={this.input}
               />
               <button onClick={this.onBtnClickHandler}>Показать alert</button>
             </React.Fragment>
