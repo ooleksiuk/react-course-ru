@@ -141,37 +141,68 @@
         }),
       };
 
-      // --- добавили test input ---
-      class TestInput extends React.Component {
-        constructor(props) {
-          super(props);
-          // атрибут <input>
-          this.input = React.createRef();
-        }
+      class Add extends React.Component {
+        state = {
+          // 1. добавили начальное состояние
+          name: '',
+          text: '',
+          agree: false,
+        };
 
-        componentDidMount() {
-          // ставим фокус в input
-          this.input.current.focus();
-        }
-
-        // считываем и выводим введеные пользователем значения
         onBtnClickHandler = (e) => {
-          alert(this.input.current.value);
+          e.preventDefault();
+          const { name, text } = this.state;
+          alert(name + '\n' + text);
+        };
+
+        // 2. добавили обработчики на изменение имени и текста новости
+        handleNameChange = (e) => {
+          this.setState({ name: e.currentTarget.value });
+        };
+
+        handleTextChange = (e) => {
+          this.setState({ text: e.currentTarget.value });
+        };
+
+        // обработчик кликов по чекбоксу
+        handleCheckboxChange = (e) => {
+          // чтобы установить true/false считываем свойство checked
+          this.setState({ agree: e.currentTarget.checked });
+          //  N.B: происходит изменение state => вызывается перерисовка !!!
         };
 
         render() {
+          const { name, text, agree } = this.state; // 3. вытащили значения из стейта
           console.log('Рендерим TestInput компонент');
+          // в value элементов записали значения переменных из состояния
           return (
-            <React.Fragment>
+            <form className="add">
               <input
-                className="test-input"
-                onChange={this.onChangeHandler}
-                defaultValue=""
-                placeholder="Введите значения"
-                ref={this.input}
+                type="text"
+                onChange={this.handleNameChange}
+                className="add__author"
+                placeholder="Ваше имя"
+                value={name}
               />
-              <button onClick={this.onBtnClickHandler}>Показать alert</button>
-            </React.Fragment>
+              <textarea
+                onChange={this.handleTextChange}
+                className="add__text"
+                placeholder="Текст новости"
+                value={text}
+              ></textarea>
+              <label className="add__checkrule">
+                <input type="checkbox" onChange={this.handleCheckboxChange} /> Я
+                согласен с правилами
+              </label>
+              <button
+                className="add__btn"
+                onClick={this.onBtnClickHandler}
+                // атрибут disabled у кнопки равен значению из state;
+                disabled={!agree}
+              >
+                Показать alert
+              </button>
+            </form>
           );
         }
       }
@@ -181,7 +212,7 @@
         return (
           <React.Fragment>
             <h3>Новости</h3>
-            <TestInput /> {/* добавили вывод компонента */}
+            <Add /> {/* добавили вывод компонента */}
             {/*подключение stateless компонент*/}
             <News posledine_novosti={myNews} /> {/* добавили свойство data */}
           </React.Fragment>
