@@ -155,13 +155,21 @@
           alert(name + '\n' + text);
         };
 
-        // 2. добавили обработчики на изменение имени и текста новости
+        /* Было:
+
         handleNameChange = (e) => {
           this.setState({ name: e.currentTarget.value });
         };
-
         handleTextChange = (e) => {
           this.setState({ text: e.currentTarget.value });
+        };
+
+        */
+
+        // 2. добавили ЕДИНЫЙ обработчик на изменение имени и текста новости
+        handleChange = (e) => {
+          const { id, value } = e.currentTarget;
+          this.setState({ [id]: e.currentTarget.value });
         };
 
         // обработчик кликов по чекбоксу
@@ -189,14 +197,16 @@
           return (
             <form className="add">
               <input
+                id="name"
                 type="text"
-                onChange={this.handleNameChange}
+                onChange={this.handleChange}
                 className="add__author"
                 placeholder="Ваше имя"
                 value={name}
               />
               <textarea
-                onChange={this.handleTextChange}
+                id="text"
+                onChange={this.handleChange}
                 className="add__text"
                 placeholder="Текст новости"
                 value={text}
