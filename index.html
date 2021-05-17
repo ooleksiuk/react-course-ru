@@ -43,9 +43,13 @@
       ];
 
       class News extends React.Component {
+        state = {
+          visible: true, // определили начальное состояние
+        };
         // Рендерим разметку с новостными записями
         // N.B! Используем синтаксис стрелочной ф-ии чтобы не терять контекст this (можем обращаться к this.props)
         renderNews = () => {
+          const { visible } = this.state; // вытащилии динамич. св-во visible из this.state
           const { posledine_novosti } = this.props;
           // Переменная-шаблон объявленная заранее, в которую в зависимости от условия НАПОЛНЯЕТСЯ необходимая разметка.
           let newsTemplate = null;
@@ -61,15 +65,24 @@
           return newsTemplate;
         };
 
+        handleReadMoreClck = (e) => {
+          e.preventDefault();
+          this.setState({ visible: false });
+        };
+
         render() {
           const { posledine_novosti } = this.props;
-          console.log(this.renderNews());
+          // console.log(this.renderNews());
+          const { visible } = this.state; // вытащилии динамич. св-во visible из this.state
 
           return (
             <div className="news">
               {this.renderNews()}
-              {posledine_novosti.length ? (
-                <strong className={'news__count'}>
+              {posledine_novosti.length && visible ? (
+                <strong
+                  onClick={this.handleReadMoreClck}
+                  className={'news__count'}
+                >
                   Всего новостей: {posledine_novosti.length}
                 </strong>
               ) : null}
@@ -97,6 +110,7 @@
         render() {
           const { author, text, bigText } = this.props.note; // вытащили неизменяемые св-ва из this.props
           const { visible } = this.state; // вытащилии динамич. св-во visible из this.state
+          console.log('render вызов', this); // добавили console.log
           return (
             <div className="article">
               <p className="news__author">{author}:</p>
