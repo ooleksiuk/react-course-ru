@@ -48,11 +48,6 @@
           counter: 0,
         };
 
-        // метод-обработчик
-        handleCounter = () => {
-          this.setState({ counter: this.state.counter++ }); // увелич. счетчик => изменяем state
-        };
-
         // Рендерим разметку с новостными записями
         // N.B! Используем синтаксис стрелочной ф-ии чтобы не терять контекст this (можем обращаться к this.props)
         renderNews = () => {
@@ -83,15 +78,11 @@
               {
                 /* добавили onClick */
                 posledine_novosti.length ? (
-                  <strong
-                    onClick={this.handleCounter}
-                    className={'news__count'}
-                  >
+                  <strong className={'news__count'}>
                     Всего новостей: {posledine_novosti.length}
                   </strong>
                 ) : null
               }
-              <p>Всего кликов: {counter}</p>
             </div>
           );
         }
@@ -116,7 +107,7 @@
         render() {
           const { author, text, bigText } = this.props.note; // вытащили неизменяемые св-ва из this.props
           const { visible } = this.state; // вытащилии динамич. св-во visible из this.state
-          console.log('render вызов', this); // добавили console.log
+          // console.log('render вызов', this); // добавили console.log
           return (
             <div className="article">
               <p className="news__author">{author}:</p>
@@ -150,11 +141,38 @@
         }),
       };
 
+      // --- добавили test input ---
+      class TestInput extends React.Component {
+        state = { myValue: '' };
+        onChangeHandler = (e) => {
+          this.setState({ myValue: e.currentTarget.value });
+        };
+
+        onBtnClickHandler = (e) => {
+          alert(this.state.myValue);
+        };
+
+        render() {
+          return (
+            <React.Fragment>
+              <input
+                className="test-input"
+                onChange={this.onChangeHandler}
+                value={this.state.myValue}
+                placeholder="Введите значения"
+              />
+              <button onClick={this.onBtnClickHandler}>Показать alert</button>
+            </React.Fragment>
+          );
+        }
+      }
+
       // Создание stateless компонента
       const App = () => {
         return (
           <React.Fragment>
             <h3>Новости</h3>
+            <TestInput /> {/* добавили вывод компонента */}
             {/*подключение stateless компонент*/}
             <News posledine_novosti={myNews} /> {/* добавили свойство data */}
           </React.Fragment>
