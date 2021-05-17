@@ -149,12 +149,18 @@
           this.input = React.createRef();
         }
 
-        // считываем и выводим введеные пользователем значения 
+        componentDidMount() {
+          // ставим фокус в input
+          this.input.current.focus();
+        }
+
+        // считываем и выводим введеные пользователем значения
         onBtnClickHandler = (e) => {
           alert(this.input.current.value);
         };
 
         render() {
+          console.log('Рендерим TestInput компонент');
           return (
             <React.Fragment>
               <input
