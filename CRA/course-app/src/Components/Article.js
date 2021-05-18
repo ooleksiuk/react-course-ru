@@ -44,7 +44,7 @@ class Article extends React.Component {
 
 // добавили propTypes - свойство в компонент <Article />
 Article.propTypes = {
-  id: PropTypes.string.isRequired,
+  id: PropTypes.number.isRequired,
   note: PropTypes.shape({
     author: PropTypes.string.isRequired,
     text: PropTypes.string.isRequired,

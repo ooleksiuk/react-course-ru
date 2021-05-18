@@ -1,7 +1,7 @@
 import React from 'react'; // подключение библиотеки React
 import { Add } from './Components/Add';
 import { News } from './Components/News';
-import newsData from './data/newsData'; // импорт по дефолту
+// import newsData from './data/newsData'; // импорт по дефолту
 import './App.css';
 
 /*
@@ -12,7 +12,8 @@ import './App.css';
   */
 class App extends React.Component {
   state = {
-    news: newsData,
+    news: null,
+    isLoading: false, // статус для манипуляций "прелоадером" ("Загружаю..." в нашем случае)
   };
   //  ******************************************************************************
   handleAddNews = (data) => {
@@ -32,13 +33,40 @@ class App extends React.Component {
 
   //  ******************************************************************************
 
+  componentDidMount() {
+    // запрос за даннмыи начался
+    this.setState({ isLoding: true });
+    console.log('Запрос за данными начался');
+    fetch('http://localhost:3000/data/newsData.json')
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        setTimeout(() => {
+          this.setState({ isLoading: false, news: data });
+        }, 3000);
+
+        /*
+           делаем задержку в 3 секунды
+           запрос завершился успешно,
+           делаем isLoading: false
+           в news кладем пришедшие данные
+        */
+
+        console.log('приехали данные ', data);
+      });
+  }
+
   render() {
+    const { news, isLoading } = this.state; // все необходимое взяли из state
+
     return (
       <React.Fragment>
+        {/* В props компонента передаем функцию, имеющую доступ к state*/}
         <Add onAddNews={this.handleAddNews} />
         <h3>Новости</h3>
-        {/* В props компонента передаем функцию, имеющую доступ к state*/}
-        <News posledine_novosti={this.state.news} />
+        {isLoading && <p>Загружаю...</p>}
+        {Array.isArray(news) && <News posledine_novosti={news} />}
       </React.Fragment>
     );
   }
