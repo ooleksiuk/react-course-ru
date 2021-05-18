@@ -135,6 +135,7 @@
 
       // добавили propTypes - свойство в компонент <Article />
       Article.propTypes = {
+        id: PropTypes.string.isRequired,
         note: PropTypes.shape({
           author: PropTypes.string.isRequired,
           text: PropTypes.string.isRequired,
@@ -146,25 +147,33 @@
           // 1. добавили начальное состояние
           name: '',
           text: '',
+          bigText: '',
           agree: false,
         };
 
         onBtnClickHandler = (e) => {
           e.preventDefault();
-          const { name, text } = this.state;
-          alert(name + '\n' + text);
+          const { name, text, bigText } = this.state;
+
+          // Вызов функции handleAddNews сохраненной в props - onAddNews
+          this.props.onAddNews({
+            id: +new Date(),
+            author: name, // name сохраняем в поле author
+            text,
+            bigText,
+          });
         };
 
         /* Было:
 
-        handleNameChange = (e) => {
-          this.setState({ name: e.currentTarget.value });
-        };
-        handleTextChange = (e) => {
-          this.setState({ text: e.currentTarget.value });
-        };
+          handleNameChange = (e) => {
+            this.setState({ name: e.currentTarget.value });
+          };
+          handleTextChange = (e) => {
+            this.setState({ text: e.currentTarget.value });
+          };
 
-        */
+          */
 
         // 2. добавили ЕДИНЫЙ обработчик на изменение имени и текста новости
         handleChange = (e) => {
@@ -191,7 +200,7 @@
         };
 
         render() {
-          const { name, text, agree } = this.state; // 3. вытащили значения из стейта
+          const { name, text, bigText, agree } = this.state; // 3. вытащили значения из стейта
           console.log('Рендерим TestInput компонент');
           // в value элементов записали значения переменных из состояния
           return (
@@ -211,6 +220,16 @@
                 placeholder="Текст новости"
                 value={text}
               ></textarea>
+
+              {/* добавили bigText */}
+              <textarea
+                id="bigText"
+                onChange={this.handleChange}
+                className="add__text"
+                placeholder="Текст новости подробно"
+                value={bigText}
+              ></textarea>
+
               <label className="add__checkrule">
                 <input type="checkbox" onChange={this.handleCheckboxChange} /> Я
                 согласен с правилами
@@ -221,24 +240,56 @@
                 // атрибут disabled у кнопки равен значению из state;
                 disabled={!this.validate()}
               >
-                Показать alert
+                Добавить новость
               </button>
             </form>
           );
         }
       }
 
-      // Создание stateless компонента
-      const App = () => {
-        return (
-          <React.Fragment>
-            <h3>Новости</h3>
-            <Add /> {/* добавили вывод компонента */}
-            {/*подключение stateless компонент*/}
-            <News posledine_novosti={myNews} /> {/* добавили свойство data */}
-          </React.Fragment>
-        );
+      Add.propTypes = {
+        onAddNews: PropTypes.func.isRequired, // func используется для проверки передачи function
       };
+
+      /*
+       ! Храним и взаимодействуем со state (содержащий новости) в родительском компоненте
+
+        - В дочерний компонент передаём handleAddNews функцию (объявленную в родителе) как props
+
+       */
+      class App extends React.Component {
+        state = {
+          news: myNews,
+        };
+        //  ******************************************************************************
+        handleAddNews = (data) => {
+          console.log(
+            'я вызвана из Add, но имею доступ к this.state у App!',
+            this.state.news
+          );
+
+          // сначала мы формируем массив, на основе
+          // всего того, что уже было в новостях
+          // и кладем это все в новый массив +
+          // новую новость кладем в начало массива
+          const nextNews = [data, ...this.state.news];
+          // затем обновляем новый массив новостей в this.state.news
+          this.setState({ news: nextNews });
+        };
+
+        //  ******************************************************************************
+
+        render() {
+          return (
+            <React.Fragment>
+              <Add onAddNews={this.handleAddNews} />
+              <h3>Новости</h3>
+              {/* В props компонента передаем функцию, имеющую доступ к state*/}
+              <News posledine_novosti={this.state.news} />
+            </React.Fragment>
+          );
+        }
+      }
 
       // Указываем в какой тэг "вмонтируем" компоненты
       ReactDOM.render(<App />, document.getElementById('root'));
